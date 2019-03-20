@@ -37,8 +37,6 @@ class Game
 
     unsigned int number_of_players;
     unsigned int current_player;
-
-  protected:
     State current_state;
 };
 

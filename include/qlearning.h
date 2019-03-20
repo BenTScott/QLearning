@@ -18,12 +18,12 @@ public:
 
   QTable<State, Action> Run(std::size_t iterations)
   {
-    for (int i = 0; i < iterations; i++)
+    for (std::size_t i = 0; i < iterations; i++)
     {
       game->Initialise();
+      State s = game->current_state;
       while (!s.IsTerminal())
       {
-        State s = game->current_state;
         Action a = q_table.GetNextAction(s);
         auto current_player = game->current_player;
         int reward = game->ApplyAction(a);
@@ -34,9 +34,10 @@ public:
         {
           q_table.UpdateAction(s, a, reward, game->current_state, false);
         }
+        s = game->current_state;
       }
-      return q_table;
     }
+    return q_table;
   }
 
 protected:

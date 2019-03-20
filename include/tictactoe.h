@@ -47,6 +47,7 @@ class TicTacToeState : State<int>
         {
             return true;
         }
+        return false;
     }
 
     bool IsWin()
@@ -60,7 +61,7 @@ class TicTacToeState : State<int>
             }
 
             // Horizontal
-            if (board[3*i] != -1 && board[3*i] == board[3*i + 1] && board[3*i + 1] == board[3*i + 2])
+            if (board[3 * i] != -1 && board[3 * i] == board[3 * i + 1] && board[3 * i + 1] == board[3 * i + 2])
             {
                 return true;
             }
@@ -96,7 +97,21 @@ class TicTacToeState : State<int>
 
         return os.str();
     }
+
+    friend bool operator==(const TicTacToeState &lhs, const TicTacToeState &rhs);
+    friend bool operator!=(const TicTacToeState &lhs, const TicTacToeState &rhs);
+    friend bool operator<(const TicTacToeState &lhs, const TicTacToeState &rhs);
+    friend bool operator>(const TicTacToeState &lhs, const TicTacToeState &rhs);
+    friend bool operator<=(const TicTacToeState &lhs, const TicTacToeState &rhs);
+    friend bool operator>=(const TicTacToeState &lhs, const TicTacToeState &rhs);
 };
+
+inline bool operator==(const TicTacToeState &lhs, const TicTacToeState &rhs) { return lhs.Hash() == rhs.Hash(); }
+inline bool operator!=(const TicTacToeState &lhs, const TicTacToeState &rhs) { return !operator==(lhs, rhs); }
+inline bool operator<(const TicTacToeState &lhs, const TicTacToeState &rhs) { return lhs.Hash() < rhs.Hash(); }
+inline bool operator>(const TicTacToeState &lhs, const TicTacToeState &rhs) { return operator<(rhs, lhs); }
+inline bool operator<=(const TicTacToeState &lhs, const TicTacToeState &rhs) { return !operator>(lhs, rhs); }
+inline bool operator>=(const TicTacToeState &lhs, const TicTacToeState &rhs) { return !operator<(lhs, rhs); }
 
 class TicTacToe : public Game<TicTacToeState, int>
 {

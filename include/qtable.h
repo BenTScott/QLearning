@@ -19,7 +19,7 @@ public:
   {
     MaxHeapMap<Action, int> &map = state_action_reward_map[state];
     
-    int old_est = std::get<0>(action_reward_map[action]);
+    int old_est = std::get<0>(map[action]);
 
     int best_new_state_est = GetActionRewardMap(new_state).MaxValue();
 
@@ -28,17 +28,17 @@ public:
       best_new_state_est *= -1;
     }
 
-    map.update(action, (1.0-step_size)*old_est + step_size*(reward + lambda * best_new_state_est));
+    map.update(action, (1.0-step_size)*old_est + step_size*(reward + gamma * best_new_state_est));
   }
 
   //Gets the action to take in an epsilon greedy manner.
   Action GetNextAction(State state)
   {
-    const MaxHeapMap<Action, int> &map = GetActionRewardMap(state);
+    MaxHeapMap<Action, int> &map = GetActionRewardMap(state);
 
     double r = Random::Uniform(0.0, 1.0);
 
-    if (r <= eplison)
+    if (r <= epsilon)
     {
       return map.RandomKey();
     }
@@ -46,7 +46,7 @@ public:
     return map.MaxKey();
   }
 
-  const MaxHeapMap<Action, int> &GetActionRewardMap(State state)
+  MaxHeapMap<Action, int> &GetActionRewardMap(State state)
   {
     MaxHeapMap<Action, int> &action_map = state_action_reward_map[state];
 

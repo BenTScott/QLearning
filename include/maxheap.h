@@ -88,7 +88,7 @@ class MaxHeap
         base_vector.push_back(t);
         std::size_t index = base_vector.size() - 1;
 
-        while (index != 0 && less_than(base_vector[parent(index)], base_vector[i]))
+        while (index != 0 && less_than(base_vector[parent(index)], base_vector[index]))
         {
             swap(&base_vector[index], &base_vector[parent(index)]);
             index = parent(index);

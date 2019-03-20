@@ -13,7 +13,7 @@ template <typename T, typename S>
 class MaxHeapMap
 {
   public:
-    MaxHeapMap() : heap([](const std::tuple<T, S> &a, const std::tuple<T, S> &b) { return std::get<1>(a) < std::get<1>(b) }){};
+    MaxHeapMap() : heap([](const std::tuple<T, S> &a, const std::tuple<T, S> &b) { return std::get<1>(a) < std::get<1>(b); }){};
 
     void push(T t, S s)
     {
@@ -25,12 +25,12 @@ class MaxHeapMap
         return heap.front();
     };
 
-    T &MaxKey() const
+    T &MaxKey()
     {
         return std::get<0>(heap.front());
     };
 
-    S &MaxValue() const
+    S &MaxValue()
     {
         return std::get<1>(heap.front());
     };
@@ -47,6 +47,11 @@ class MaxHeapMap
             this->push(t, fill_value);
         }
     };
+
+    bool empty()
+    {
+        return map.empty();
+    }
 
     std::tuple<T, S> &operator[](const T &index)
     {
