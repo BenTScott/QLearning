@@ -37,7 +37,8 @@ class MaxHeapMap
 
     void update(T t, S s)
     {
-        map[t] = heap.modify(map[t], {t, s});
+        auto new_index = heap.modify(map[t], {t, s});
+        map[t] = new_index;
     }
 
     void fill(std::vector<T> keys, S fill_value)

@@ -43,7 +43,7 @@ class TicTacToeState : State<int>
 
     virtual bool IsTerminal() override
     {
-        if (std::find(board.begin(), board.end(), -1) == board.end())
+        if (IsWin() || std::find(board.begin(), board.end(), -1) == board.end())
         {
             return true;
         }

@@ -5,6 +5,7 @@
 #include <string>
 #include <vector>
 #include <array>
+#include <iostream>
 #include "game.h"
 #include "qtable.h"
 
@@ -20,13 +21,31 @@ public:
   {
     for (std::size_t i = 0; i < iterations; i++)
     {
+      std::cout << "Iteration " << i << std::endl;
+
       game->Initialise();
       State s = game->current_state;
+
       while (!s.IsTerminal())
       {
+        
+#ifdef _DEBUG
+        std::cout << "Game state: " << s.Hash() << std::endl;
+#endif
+
         Action a = q_table.GetNextAction(s);
+
+#ifdef _DEBUG
+        std::cout << "Action: " << a << std::endl;
+#endif
+
         auto current_player = game->current_player;
         int reward = game->ApplyAction(a);
+
+#ifdef _DEBUG
+        std::cout << "Reward: " << reward << std::endl;
+#endif
+
         if (game->current_player == current_player)
         {
           q_table.UpdateAction(s, a, reward, game->current_state, true);

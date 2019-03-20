@@ -2,6 +2,7 @@
 #define _INCLUDE_Q_TABLE_H_
 
 #include <vector>
+#include <iostream>
 #include <algorithm>
 #include <map>
 #include "utilities.h"
@@ -17,18 +18,30 @@ public:
 
   void UpdateAction(State state, Action action, int reward, State new_state, bool is_players_turn)
   {
+    //std::cout << "Updating " << state.Hash() << std::endl;
+
     MaxHeapMap<Action, int> &map = state_action_reward_map[state];
     
+    //std::cout << "Retrieved map" << std::endl;
+
     int old_est = std::get<0>(map[action]);
 
-    int best_new_state_est = GetActionRewardMap(new_state).MaxValue();
+    //std::cout << "Previous estimate: " << old_est << std::endl;
+
+    int best_new_state_est = new_state.IsTerminal() ? 0 : GetActionRewardMap(new_state).MaxValue();
+
+    //std::cout << "Best estimate for new state: " << best_new_state_est << std::endl;
 
     if (!is_players_turn)
     {
       best_new_state_est *= -1;
     }
 
-    map.update(action, (1.0-step_size)*old_est + step_size*(reward + gamma * best_new_state_est));
+    int new_value = (1.0-step_size)*old_est + step_size*(reward + gamma * best_new_state_est);
+
+    //std::cout << "New best for old state: " << new_value << std::endl;
+
+    map.update(action, new_value);
   }
 
   //Gets the action to take in an epsilon greedy manner.
@@ -52,8 +65,10 @@ public:
 
     if (action_map.empty())
     {
+      //std::cout << "Filling new state" << std::endl;
       action_map.fill(state.AvailableActions(), default_value);
     }
+
     return action_map;
   }
 

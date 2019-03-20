@@ -65,8 +65,8 @@ class MaxHeap
                 swap(right_ptr, &base_vector[i]);
                 i = right(i);
             }
-            T *left_ptr = this->at(left(i));
-            T *right_ptr = this->at(right(i));
+            left_ptr = this->at(left(i));
+            right_ptr = this->at(right(i));
         }
 
         return i;
