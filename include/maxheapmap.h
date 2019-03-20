@@ -6,17 +6,18 @@
 #include <vector>
 #include <tuple>
 #include "maxheap.h"
+#include "utilities.h"
 
 //Sacrifices memory on the key type
 template <typename T, typename S>
 class MaxHeapMap
 {
   public:
-    MaxHeapMap() : heap([](const std::tuple<T, S> &a, const std::tuple<T, S> &b) { return std::get<1>(a) < std::get<1>(b) }) {};
+    MaxHeapMap() : heap([](const std::tuple<T, S> &a, const std::tuple<T, S> &b) { return std::get<1>(a) < std::get<1>(b) }){};
 
     void push(T t, S s)
     {
-        map[t] = heap.push({t,s});
+        map[t] = heap.push({t, s});
     };
 
     std::tuple<T, S> &MaxPair()
@@ -24,14 +25,19 @@ class MaxHeapMap
         return heap.front();
     };
 
-    T &MaxKey()
+    T &MaxKey() const
+    {
+        return std::get<0>(heap.front());
+    };
+
+    S &MaxValue() const
     {
         return std::get<1>(heap.front());
     };
 
     void update(T t, S s)
     {
-        map[t] = heap.modify(map[t], {t,s});
+        map[t] = heap.modify(map[t], {t, s});
     }
 
     void fill(std::vector<T> keys, S fill_value)
@@ -42,9 +48,14 @@ class MaxHeapMap
         }
     };
 
-    const std::tuple<T, S> &operator[](const T& index)
+    std::tuple<T, S> &operator[](const T &index)
     {
         return *heap.at(map[index]);
+    };
+
+    T RandomKey() const
+    {
+        return std::get<0>(*RandomElement(map.begin(), map.end()));
     }
 
   protected:

@@ -1,16 +1,14 @@
 #include <iostream>
+#include "qlearning.h"
 #include "tictactoe.h"
 
 int main( int argc, const char* argv[] )
 {
 	std::cout <<  "\nHello World\n\n";
 
-	auto s = TicTacToeState({1,0,-1,0,-1,-1,-1,-1,1},1);
+	auto r_learning = QLearning(new TicTacToe(), 0.1, 1, 0.5);
 
-	std::cout << s.Hash() << std::endl;
+	r_learning.Run(100);
 
-	s = TicTacToeState({0,1,-1,1,-1,-1,-1,-1,0},0);
-
-	std::cout << s.Hash() << std::endl;
-
+	
 }

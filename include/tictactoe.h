@@ -5,84 +5,127 @@
 #include <tuple>
 #include <string>
 #include "game.h"
+#include "state.h"
 #include <sstream>
 
-//typedef Game<std::tuple<std::array<int, 9>, int>, int>;
-
-class TicTacToeState : public State
+class TicTacToeState : State<int>
 {
-    public:
-        TicTacToeState()
-        {
-            board.fill(-1);
-        }
+  public:
+    std::array<int, 9> board;
+    bool next_player;
 
-        TicTacToeState(bool next_player) : next_player(next_player)
-        {
-            board.fill(-1);
-        }
+    TicTacToeState()
+    {
+        board.fill(-1);
+    }
 
-        TicTacToeState(std::array<int,9> board, bool next_player) : board(board), next_player(next_player) {}
+    TicTacToeState(bool next_player) : next_player(next_player)
+    {
+        board.fill(-1);
+    }
 
-        virtual std::string Hash()
+    TicTacToeState(std::array<int, 9> board, bool next_player) : board(board), next_player(next_player) {}
+
+    virtual std::vector<int> AvailableActions() override
+    {
+        std::vector<int> actions;
+        for (int i = 0; i < 9; i++)
         {
-            std::ostringstream os;
-            for (int i = 0; i < 9; i++)
+            if (board[i] == -1)
             {
-                if (board[i] == -1)
-                {
-                    os << board[i];
-                }
-                else
-                {
-                    os << ((bool) board[i] ^ next_player);
-                }
+                actions.push_back(i);
+            }
+        }
+
+        return actions;
+    }
+
+    virtual bool IsTerminal() override
+    {
+        if (std::find(board.begin(), board.end(), -1) == board.end())
+        {
+            return true;
+        }
+    }
+
+    bool IsWin()
+    {
+        for (int i = 0; i < 3; i++)
+        {
+            // Vertical
+            if (board[i] != -1 && board[i] == board[i + 3] && board[i + 3] == board[i + 6])
+            {
+                return true;
             }
 
-            return os.str();
+            // Horizontal
+            if (board[3*i] != -1 && board[3*i] == board[3*i + 1] && board[3*i + 1] == board[3*i + 2])
+            {
+                return true;
+            }
         }
 
-        std::array<int, 9> board;
-        bool next_player;
+        // Diagonals
+        if (board[0] != -1 && board[0] == board[4] && board[4] == board[8])
+        {
+            return true;
+        }
+        if (board[2] != -1 && board[2] == board[4] && board[4] == board[6])
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+    std::string Hash() const
+    {
+        std::ostringstream os;
+        for (int i = 0; i < 9; i++)
+        {
+            if (board[i] == -1)
+            {
+                os << board[i];
+            }
+            else
+            {
+                os << ((bool)board[i] ^ next_player);
+            }
+        }
+
+        return os.str();
+    }
 };
 
-// class TicTacToe : public Game<int>
-// {
-//   public:
-//     TicTacToe() : Game(2) 
-//     {
-//         RandomPlayer();
-//         this->SetState(new TicTacToeState(GetCurrentPlayer()));
-//     }
+class TicTacToe : public Game<TicTacToeState, int>
+{
+  public:
+    TicTacToe() : Game(2)
+    {
+        // RandomPlayer();
+        // this->SetState(new TicTacToeState(GetCurrentPlayer()));
+    }
 
-//     //Do we need to return reward for all players at each action and back apply?
-//     virtual int ApplyAction(int a) override
-//     {
-//         current_state[a] = current_player;
-        
-//         if (false /*Player wins*/)
-//         {
-//             return 1;
-//         }
+    //Do we need to return reward for all players at each action and back apply?
+    virtual int ApplyAction(int a) override
+    {
+        current_state.board[a] = current_player;
 
-//         NextPlayer();
+        if (current_state.IsWin())
+        {
+            return 1;
+        }
 
-//         return 0;
-//     }
+        NextPlayer();
 
-//     virtual std::vector<int> GetAvailableActions()
-//     {
-//         auto actions = std::vector<int>();
-//         for (int i = 0; i < 9; i++)
-//         {
-//             if (current_state[i] == -1)
-//             {
-//                 actions.push_back(i);
-//             }
-//         }
+        return 0;
+    }
 
-//         return actions;
-//     }
-// };
+    virtual void Initialise() override
+    {
+        RandomPlayer();
+        this->SetState(TicTacToeState(GetCurrentPlayer()));
+    }
+};
 
 #endif

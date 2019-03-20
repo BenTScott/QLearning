@@ -2,7 +2,6 @@
 #define _INCLUDE_GAME_H_
 
 #include "utilities.h"
-#include "state.h"
 
 template <typename State, typename Action>
 class Game
@@ -12,9 +11,7 @@ class Game
     Game(unsigned int number_of_players, unsigned int first_player = 0) : number_of_players(number_of_players), current_player(first_player) {}
 
     virtual int ApplyAction(Action a) = 0;
-
-    virtual std::vector<Action> GetAvailableActions() = 0;
-
+    
     void NextPlayer()
     {
         current_player++;
@@ -28,7 +25,7 @@ class Game
 
     void RandomPlayer()
     {
-        current_player = random.Uniform<int>(0, number_of_players - 1);
+        current_player =  Random::Uniform(0, number_of_players - 1);
     }
 
     void SetState(State new_state)
@@ -36,11 +33,13 @@ class Game
         current_state = new_state;
     }
 
-  protected:
-    State current_state;
+    virtual void Initialise() = 0;
+
     unsigned int number_of_players;
     unsigned int current_player;
-    Random random = Random();
+
+  protected:
+    State current_state;
 };
 
 #endif
