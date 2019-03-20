@@ -7,6 +7,7 @@
 #include "game.h"
 #include "state.h"
 #include <sstream>
+#include <algorithm>
 
 class TicTacToeState : State<int>
 {
