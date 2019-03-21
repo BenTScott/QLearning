@@ -26,3 +26,8 @@
 *.exe
 *.out
 *.app
+
+#custom
+.vscode/ipch/*
+bin/*
+bin/main
