@@ -27,76 +27,15 @@ class TicTacToeState : State<int>
 
     TicTacToeState(std::array<int, 9> board, bool next_player) : board(board), next_player(next_player) {}
 
-    virtual std::vector<int> AvailableActions() override
-    {
-        std::vector<int> actions;
-        for (int i = 0; i < 9; i++)
-        {
-            if (board[i] == -1)
-            {
-                actions.push_back(i);
-            }
-        }
+    virtual std::vector<int> AvailableActions() override;
 
-        return actions;
-    }
+    virtual bool IsTerminal() override;
 
-    virtual bool IsTerminal() override
-    {
-        if (IsWin() || std::find(board.begin(), board.end(), -1) == board.end())
-        {
-            return true;
-        }
-        return false;
-    }
+    // Returns true if is a winning state
+    bool IsWin() const;
 
-    bool IsWin()
-    {
-        for (int i = 0; i < 3; i++)
-        {
-            // Vertical
-            if (board[i] != -1 && board[i] == board[i + 3] && board[i + 3] == board[i + 6])
-            {
-                return true;
-            }
-
-            // Horizontal
-            if (board[3 * i] != -1 && board[3 * i] == board[3 * i + 1] && board[3 * i + 1] == board[3 * i + 2])
-            {
-                return true;
-            }
-        }
-
-        // Diagonals
-        if (board[0] != -1 && board[0] == board[4] && board[4] == board[8])
-        {
-            return true;
-        }
-        if (board[2] != -1 && board[2] == board[4] && board[4] == board[6])
-        {
-            return true;
-        }
-
-        return false;
-    }
-
-    std::string Hash() const
-    {
-        std::ostringstream os;
-        for (int i = 0; i < 9; i++)
-        {
-            if (board[i] == -1)
-            {
-                os << board[i];
-            }
-            else
-            {
-                os << ((bool)board[i] ^ next_player);
-            }
-        }
-
-        return os.str();
-    }
+    // Returns a hash value for comparing states
+    std::string Hash() const;
 
     friend bool operator==(const TicTacToeState &lhs, const TicTacToeState &rhs);
     friend bool operator!=(const TicTacToeState &lhs, const TicTacToeState &rhs);
@@ -106,42 +45,14 @@ class TicTacToeState : State<int>
     friend bool operator>=(const TicTacToeState &lhs, const TicTacToeState &rhs);
 };
 
-inline bool operator==(const TicTacToeState &lhs, const TicTacToeState &rhs) { return lhs.Hash() == rhs.Hash(); }
-inline bool operator!=(const TicTacToeState &lhs, const TicTacToeState &rhs) { return !operator==(lhs, rhs); }
-inline bool operator<(const TicTacToeState &lhs, const TicTacToeState &rhs) { return lhs.Hash() < rhs.Hash(); }
-inline bool operator>(const TicTacToeState &lhs, const TicTacToeState &rhs) { return operator<(rhs, lhs); }
-inline bool operator<=(const TicTacToeState &lhs, const TicTacToeState &rhs) { return !operator>(lhs, rhs); }
-inline bool operator>=(const TicTacToeState &lhs, const TicTacToeState &rhs) { return !operator<(lhs, rhs); }
-
 class TicTacToe : public Game<TicTacToeState, int>
 {
   public:
-    TicTacToe() : Game(2)
-    {
-        // RandomPlayer();
-        // this->SetState(new TicTacToeState(GetCurrentPlayer()));
-    }
+    TicTacToe() : Game(2) {}
 
-    //Do we need to return reward for all players at each action and back apply?
-    virtual int ApplyAction(int a) override
-    {
-        current_state.board[a] = current_player;
+    virtual int ApplyAction(int a) override;
 
-        if (current_state.IsWin())
-        {
-            return 1;
-        }
-
-        NextPlayer();
-
-        return 0;
-    }
-
-    virtual void Initialise() override
-    {
-        RandomPlayer();
-        this->SetState(TicTacToeState(GetCurrentPlayer()));
-    }
+    virtual void Initialise() override;
 };
 
 #endif

@@ -75,7 +75,7 @@ class MaxHeap
     std::function<bool(const T &, const T &)> less_than;
 
   public:
-    MaxHeap(std::function<bool(const T &, const T &)> less_than = [](const T &a, const T &b) { return a < b; }) : less_than(less_than)
+    MaxHeap(std::function<bool(const T &, const T &)> less_than) : less_than(less_than)
     {
     }
 
