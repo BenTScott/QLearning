@@ -25,6 +25,12 @@ int main( int argc, const char* argv[] )
 		}
 		else
 		{
+			auto map = table.state_action_reward_map[game.current_state];
+			for (auto &i : game.current_state.AvailableActions())
+			{
+				auto pair = map[i];
+				std::cout << std::get<0>(pair) << " " << std::get<1>(pair);
+			}
 			action = table.GetBestAction(game.current_state);
 			std::cout << "CPU plays " << action << std::endl;
 			game.ApplyAction(action);

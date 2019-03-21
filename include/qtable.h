@@ -77,8 +77,10 @@ public:
     return GetActionRewardMap(state).MaxKey();
   }
 
-protected:
+
   std::map<State, MaxHeapMap<Action, double>> state_action_reward_map;
+protected:
+  
   int default_value;
   double step_size;
   double gamma;
