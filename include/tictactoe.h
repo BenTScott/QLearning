@@ -57,7 +57,7 @@ class TicTacToe : public Game<TicTacToeState, int>
   public:
     TicTacToe() : Game(2) {}
 
-    virtual int ApplyAction(int a) override;
+    virtual double ApplyAction(int a) override;
 
     virtual void Initialise() override;
 };

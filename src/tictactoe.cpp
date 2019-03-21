@@ -71,7 +71,7 @@ std::vector<int> TicTacToeState::AvailableActions()
     return actions;
 };
 
-int TicTacToe::ApplyAction(int a)
+double TicTacToe::ApplyAction(int a)
 {
     current_state.board[a] = current_player;
 

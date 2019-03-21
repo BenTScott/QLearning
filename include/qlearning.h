@@ -40,7 +40,7 @@ public:
 #endif
 
         auto current_player = game->current_player;
-        int reward = game->ApplyAction(a);
+        double reward = game->ApplyAction(a);
 
 #ifdef _DEBUG
         std::cout << "Reward: " << reward << std::endl;
