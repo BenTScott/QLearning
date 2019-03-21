@@ -28,7 +28,7 @@ public:
 
       while (!s.IsTerminal())
       {
-        
+
 #ifdef _DEBUG
         std::cout << "Game state: " << s.Hash() << std::endl;
 #endif

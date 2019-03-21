@@ -72,6 +72,11 @@ public:
     return action_map;
   }
 
+  Action GetBestAction(State state)
+  {
+    return GetActionRewardMap(state).MaxKey();
+  }
+
 protected:
   std::map<State, MaxHeapMap<Action, int>> state_action_reward_map;
   int default_value;
