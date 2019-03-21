@@ -4,9 +4,9 @@
 
 int main( int argc, const char* argv[] )
 {
-	auto r_learning = QLearning<TicTacToeState, int>(new TicTacToe(), 0.1, 1, 0.5);
+	auto r_learning = QLearning<TicTacToeState, int>(new TicTacToe(), 0.2, 1, 0.7);
 
-	auto table = r_learning.Run(1000);
+	auto table = r_learning.Run(5000);
 
 	std::cout << "Done training" << std::endl;
 
