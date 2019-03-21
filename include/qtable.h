@@ -47,7 +47,7 @@ public:
   //Gets the action to take in an epsilon greedy manner.
   Action GetNextAction(State state)
   {
-    MaxHeapMap<Action, int> &map = GetActionRewardMap(state);
+    MaxHeapMap<Action, double> &map = GetActionRewardMap(state);
 
     double r = Random::Uniform(0.0, 1.0);
 
