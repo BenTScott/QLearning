@@ -10,7 +10,7 @@ class Game
     Game(State init_state, unsigned int number_of_players, unsigned int first_player = 0) : current_state(init_state), number_of_players(number_of_players), current_player(first_player) {}
     Game(unsigned int number_of_players, unsigned int first_player = 0) : number_of_players(number_of_players), current_player(first_player) {}
 
-    virtual int ApplyAction(Action a) = 0;
+    virtual double ApplyAction(Action a) = 0;
     
     void NextPlayer()
     {

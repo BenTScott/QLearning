@@ -45,12 +45,19 @@ class TicTacToeState : State<int>
     friend bool operator>=(const TicTacToeState &lhs, const TicTacToeState &rhs);
 };
 
+inline bool operator==(const TicTacToeState &lhs, const TicTacToeState &rhs) { return lhs.Hash() == rhs.Hash(); }
+inline bool operator!=(const TicTacToeState &lhs, const TicTacToeState &rhs) { return !operator==(lhs, rhs); }
+inline bool operator<(const TicTacToeState &lhs, const TicTacToeState &rhs) { return lhs.Hash() < rhs.Hash(); }
+inline bool operator>(const TicTacToeState &lhs, const TicTacToeState &rhs) { return operator<(rhs, lhs); }
+inline bool operator<=(const TicTacToeState &lhs, const TicTacToeState &rhs) { return !operator>(lhs, rhs); }
+inline bool operator>=(const TicTacToeState &lhs, const TicTacToeState &rhs) { return !operator<(lhs, rhs); }
+
 class TicTacToe : public Game<TicTacToeState, int>
 {
   public:
     TicTacToe() : Game(2) {}
 
-    virtual int ApplyAction(int a) override;
+    virtual double ApplyAction(int a) override;
 
     virtual void Initialise() override;
 };

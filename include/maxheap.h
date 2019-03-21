@@ -90,7 +90,7 @@ class MaxHeap
 
         while (index != 0 && less_than(base_vector[parent(index)], base_vector[index]))
         {
-            swap(&base_vector[index], &base_vector[parent(index)]);
+            swap(&base_vector[index], &base_vector[parent(index)]); 
             index = parent(index);
         }
 
