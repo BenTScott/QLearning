@@ -20,7 +20,7 @@ public:
   {
     //std::cout << "Updating " << state.Hash() << std::endl;
 
-    MaximalMap<Action, double> &map = state_action_reward_map[state];
+    MaximalMap<Action, double> &map = GetActionRewardMap(state);
     
     //std::cout << "Retrieved map" << std::endl;
 
