@@ -65,7 +65,7 @@ public:
 
     if (action_map.empty())
     {
-      //std::cout << "Filling new state" << std::endl;
+      std::cout << "Filling new state " << state.Hash() << std::endl;
       action_map.fill(state.AvailableActions(), default_value);
     }
 
