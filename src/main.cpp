@@ -6,7 +6,7 @@ int main(int argc, const char *argv[])
 {
 	auto r_learning = QLearning<TicTacToeState, int>(new TicTacToe(), 0.5, 1, 0.2);
 
-	auto table = r_learning.Run(500000);
+	auto table = r_learning.RunAgainstRandom(500000);
 
 	std::cout << "Done training" << std::endl;
 

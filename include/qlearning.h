@@ -59,6 +59,43 @@ public:
     return q_table;
   }
 
+  QTable<State, Action> RunAgainstRandom(std::size_t iterations)
+  {
+    for (std::size_t i = 0; i < iterations; i++)
+    {
+      std::cout << "Iteration " << i << std::endl;
+
+      game->Initialise();
+      State s = game->current_state;
+
+      while (!s.IsTerminal())
+      {
+        if (game->current_player == 0)
+        {
+          Action a = q_table.GetNextAction(s);
+
+          auto current_player = game->current_player;
+          double reward = game->ApplyAction(a);
+
+          if (game->current_player == current_player)
+          {
+            q_table.UpdateAction(s, a, reward, game->current_state, true);
+          }
+          {
+            q_table.UpdateAction(s, a, reward, game->current_state, false);
+          }
+          s = game->current_state;
+        }
+        else
+        {
+          auto actions = game->current_state.AvailableActions();
+          game->ApplyAction(*RandomElement(actions.begin(), actions.end()));
+        }
+      }
+    }
+    return q_table;
+  }
+
 protected:
   Game<State, Action> *game;
   QTable<State, Action> q_table;
