@@ -72,11 +72,12 @@ public:
       {
         if (game->current_player == 0)
         {
+          std::cout << "Player 0" << std::endl;
           Action a = q_table.GetNextAction(s);
-
+          std::cout << "Action " << a << std::endl;
           auto current_player = game->current_player;
           double reward = game->ApplyAction(a);
-
+          std::cout << "Reward " << reward << std::endl;
           if (game->current_player == current_player)
           {
             q_table.UpdateAction(s, a, reward, game->current_state, true);
