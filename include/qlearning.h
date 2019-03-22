@@ -85,6 +85,7 @@ public:
           {
             q_table.UpdateAction(s, a, reward, game->current_state, false);
           }
+          std::cout << "Action updated";
           s = game->current_state;
         }
         else
