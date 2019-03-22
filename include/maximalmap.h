@@ -17,7 +17,12 @@ class MaximalMap
     void push_update(T t, S s)
     {
         map[t] = s;
-        if (s > max_pair->s)
+        // Why is this needed???
+        if (!max_pair)
+        {
+            max_pair = new MaximalPair(t, s);
+        }
+        else if (s > max_pair->s)
         {
             max_pair->t = t;
             max_pair->s = s;
