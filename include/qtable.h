@@ -18,19 +18,19 @@ public:
 
   void UpdateAction(State state, Action action, double reward, State new_state, bool is_players_turn)
   {
-    //std::cout << "Updating " << state.Hash() << std::endl;
+    std::cout << "Updating " << state.Hash() << std::endl;
 
     MaximalMap<Action, double> &map = GetActionRewardMap(state);
     
-    //std::cout << "Retrieved map" << std::endl;
+    std::cout << "Retrieved map" << std::endl;
 
     double old_est = map[action];
 
-    //std::cout << "Previous estimate: " << old_est << std::endl;
+    std::cout << "Previous estimate: " << old_est << std::endl;
 
     double best_new_state_est = new_state.IsTerminal() ? 0 : GetActionRewardMap(new_state).MaxValue();
 
-    //std::cout << "Best estimate for new state: " << best_new_state_est << std::endl;
+    std::cout << "Best estimate for new state: " << best_new_state_est << std::endl;
 
     if (!is_players_turn)
     {
@@ -39,7 +39,7 @@ public:
 
     double new_value = (1.0-step_size)*old_est + step_size*(reward + gamma * best_new_state_est);
 
-    //std::cout << "New best for old state: " << new_value << std::endl;
+    std::cout << "New best for old state: " << new_value << std::endl;
 
     map.push_update(action, new_value);
   }
