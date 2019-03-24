@@ -28,6 +28,5 @@
 *.app
 
 #custom
-.vscode/ipch/*
-bin/*
-bin/main
+.vscode/ipch/
+bin/

@@ -4,13 +4,13 @@
 
 int main(int argc, const char *argv[])
 {
-	auto r_learning = QLearning<TicTacToeState, int>(new TicTacToe(), 0.5, 1, 0.2);
+	auto r_learning = QLearning<TicTacToeState, int>(new TicTacToe(), 0.1, 0.9, 0.2);
 
-	auto table = r_learning.RunAgainstRandom(500000);
+	auto table = r_learning.Run(500000);
 
 	std::cout << "Done training" << std::endl;
 
-	while ((true))
+	while (true)
 	{
 
 		auto game = TicTacToe();
@@ -20,7 +20,7 @@ int main(int argc, const char *argv[])
 		while (!game.current_state.IsTerminal())
 		{
 			int action;
-			std::cout << game.current_state.Hash() << std::endl;
+			std::cout << game.current_state << std::endl;
 			if (game.current_player == 0)
 			{
 				std::cout << "Enter an action (0-8): ";
@@ -29,13 +29,6 @@ int main(int argc, const char *argv[])
 			}
 			else
 			{
-				auto map = table.state_action_reward_map[game.current_state];
-				auto actions = game.current_state.AvailableActions();
-				// for (const auto &i : actions)
-				// {
-				// 	auto pair = map[i];
-				// 	std::cout << std::get<0>(pair) << " " << std::get<1>(pair) << std::endl;
-				// }
 				action = table.GetBestAction(game.current_state);
 				std::cout << "CPU plays " << action << std::endl;
 				game.ApplyAction(action);

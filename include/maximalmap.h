@@ -27,6 +27,19 @@ class MaximalMap
             max_pair->t = t;
             max_pair->s = s;
         }
+        else if (max_pair->t == t && max_pair->s > s)
+        {
+            max_pair->s = s;
+            // We need to find the next max
+            for(const auto &pair: map)
+            {
+                if (pair.second > max_pair->s)
+                {
+                    max_pair->t = pair.first;
+                    max_pair->s = pair.second;
+                }
+            }
+        }
     };
 
     std::tuple<T, S> MaxPair()

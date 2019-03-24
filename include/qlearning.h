@@ -70,29 +70,43 @@ public:
 
       while (!s.IsTerminal())
       {
-        if (game->current_player == 0)
-        {
-          std::cout << "Player 0" << std::endl;
-          Action a = q_table.GetNextAction(s);
-          std::cout << "Action " << a << std::endl;
-          auto current_player = game->current_player;
-          double reward = game->ApplyAction(a);
-          std::cout << "Reward " << reward << std::endl;
-          if (game->current_player == current_player)
-          {
-            q_table.UpdateAction(s, a, reward, game->current_state, true);
-          }
-          {
-            q_table.UpdateAction(s, a, reward, game->current_state, false);
-          }
-          std::cout << "Action updated";
-          s = game->current_state;
-        }
-        else
+        if (game->current_player != 0)
         {
           auto actions = game->current_state.AvailableActions();
           game->ApplyAction(*RandomElement(actions.begin(), actions.end()));
+          s = game->current_state;
+          continue;
         }
+
+        State state_to_update;
+        State resulting_state;
+        Action agent_action;
+        double reward = 0;
+        for (unsigned int i = 0; i < game->number_of_players; i++)
+        {
+          if (s.IsTerminal())
+          {
+            break;
+          }
+          
+          if (game->current_player == 0)
+          {
+            agent_action = q_table.GetNextAction(s);
+            //auto current_player = game->current_player;
+            state_to_update = s;
+            reward += game->ApplyAction(agent_action);
+            resulting_state = game->current_state; 
+          }
+          else
+          {
+            auto actions = game->current_state.AvailableActions();
+            reward -= game->ApplyAction(*RandomElement(actions.begin(), actions.end()));
+          }
+
+          s = game->current_state;
+        }
+
+        q_table.UpdateAction(state_to_update, agent_action, reward, resulting_state, true);
       }
     }
     return q_table;
