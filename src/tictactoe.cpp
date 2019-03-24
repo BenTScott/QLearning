@@ -20,11 +20,18 @@ std::string TicTacToeState::Hash() const
 
 std::ostream &operator<<(std::ostream &os, const TicTacToeState &obj)
 {
+    os << obj.Hash();
+    return os;
+};
+
+std::string TicTacToeState::PrettyPrint() const
+{
+    std::ostringstream os;
     for (int i = 0; i < 3; i++)
     {
         for (int j = 0; j < 3; j++)
         {
-            switch (obj.board[3*i + j])
+            switch (board[3 * i + j])
             {
             case 0:
                 os << "|O";
@@ -39,8 +46,8 @@ std::ostream &operator<<(std::ostream &os, const TicTacToeState &obj)
         }
         os << "|" << std::endl;
     }
-    return os;
-};
+    return os.str();
+}
 
 bool TicTacToeState::IsWin() const
 {
@@ -81,7 +88,7 @@ bool TicTacToeState::IsTerminal()
     return false;
 };
 
-std::vector<int> TicTacToeState::AvailableActions()
+std::vector<int> TicTacToeState::AvailableActions() const
 {
     std::vector<int> actions;
     for (int i = 0; i < 9; i++)
@@ -113,4 +120,43 @@ void TicTacToe::Initialise()
 {
     RandomPlayer();
     this->SetState(TicTacToeState(GetCurrentPlayer()));
+};
+
+std::istream &operator>>(std::istream &is, TicTacToeState &state)
+{
+    std::string state_hash;
+    is >> state_hash;
+
+    int pos = 0;
+    for (std::size_t i = 0; i < state_hash.length(); i++)
+    {
+        if (state_hash[i] == '-')
+        {
+            i++;
+            state.board[pos++] = -1;
+        }
+        else if (state_hash[i] == '1')
+        {
+            state.board[pos++] = 1;
+        }
+        else
+        {
+            state.board[pos++] = 0;
+        }
+        
+        if (pos >= 9 && i < state_hash.length() - 1)
+        {
+            is.setstate(std::ios::failbit);
+            return is;
+        }
+    }
+
+    state.next_player = false;
+
+    if (pos != 9)
+    {
+        is.setstate(std::ios::failbit);
+    }
+
+    return is;
 };

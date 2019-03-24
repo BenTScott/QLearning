@@ -27,7 +27,7 @@ public:
 
   TicTacToeState(std::array<int, 9> board, bool next_player) : board(board), next_player(next_player) {}
 
-  virtual std::vector<int> AvailableActions() override;
+  virtual std::vector<int> AvailableActions() const override;
 
   virtual bool IsTerminal() override;
 
@@ -37,6 +37,8 @@ public:
   // Returns a hash value for comparing states
   std::string Hash() const;
 
+  std::string PrettyPrint() const;
+
   friend bool operator==(const TicTacToeState &lhs, const TicTacToeState &rhs);
   friend bool operator!=(const TicTacToeState &lhs, const TicTacToeState &rhs);
   friend bool operator<(const TicTacToeState &lhs, const TicTacToeState &rhs);
@@ -44,6 +46,7 @@ public:
   friend bool operator<=(const TicTacToeState &lhs, const TicTacToeState &rhs);
   friend bool operator>=(const TicTacToeState &lhs, const TicTacToeState &rhs);
   friend std::ostream &operator<<(std::ostream &os, const TicTacToeState &obj);
+  friend std::istream& operator>>(std::istream& is, TicTacToeState& obj);
 };
 
 inline bool operator==(const TicTacToeState &lhs, const TicTacToeState &rhs) { return lhs.Hash() == rhs.Hash(); }

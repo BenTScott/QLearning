@@ -10,7 +10,7 @@ class State
   public:
     State(){};
     virtual bool IsTerminal() = 0;
-    virtual std::vector<Action> AvailableActions() = 0;
+    virtual std::vector<Action> AvailableActions() const = 0;
 };
 
 #endif
