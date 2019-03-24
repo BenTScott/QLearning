@@ -6,7 +6,7 @@
 #include <algorithm>
 #include <map>
 #include "utilities.h"
-#include "maxheapmap.h"
+#include "maximalmap.h"
 
 template <typename State, typename Action>
 class QTable
@@ -19,14 +19,18 @@ public:
   void UpdateAction(State state, Action action, double reward, State new_state, bool is_players_turn)
   {
     //std::cout << "Updating " << state.Hash() << std::endl;
-
-    MaxHeapMap<Action, double> &map = state_action_reward_map[state];
+    // auto _oldstatehash = state.Hash();
+    // auto _newstatehash = new_state.Hash();
+    // auto _terminal = new_state.IsTerminal();
+    MaximalMap<Action, double> &map = GetActionRewardMap(state);
     
     //std::cout << "Retrieved map" << std::endl;
 
-    double old_est = std::get<0>(map[action]);
+    double old_est = map[action];
 
     //std::cout << "Previous estimate: " << old_est << std::endl;
+
+    //MaximalMap<Action, double> &map2 = GetActionRewardMap(new_state);
 
     double best_new_state_est = new_state.IsTerminal() ? 0 : GetActionRewardMap(new_state).MaxValue();
 
@@ -41,13 +45,13 @@ public:
 
     //std::cout << "New best for old state: " << new_value << std::endl;
 
-    map.update(action, new_value);
+    map.push_update(action, new_value);
   }
 
   //Gets the action to take in an epsilon greedy manner.
   Action GetNextAction(State state)
   {
-    MaxHeapMap<Action, double> &map = GetActionRewardMap(state);
+    MaximalMap<Action, double> &map = GetActionRewardMap(state);
 
     double r = Random::Uniform(0.0, 1.0);
 
@@ -59,13 +63,13 @@ public:
     return map.MaxKey();
   }
 
-  MaxHeapMap<Action, double> &GetActionRewardMap(State state)
+  MaximalMap<Action, double> &GetActionRewardMap(State state)
   {
-    MaxHeapMap<Action, double> &action_map = state_action_reward_map[state];
+    MaximalMap<Action, double> &action_map = state_action_reward_map[state];
 
     if (action_map.empty())
     {
-      //std::cout << "Filling new state" << std::endl;
+      //std::cout << "Filling new state " << state.Hash() << std::endl;
       action_map.fill(state.AvailableActions(), default_value);
     }
 
@@ -78,7 +82,7 @@ public:
   }
 
 
-  std::map<State, MaxHeapMap<Action, double>> state_action_reward_map;
+  std::map<State, MaximalMap<Action, double>> state_action_reward_map;
 protected:
   
   int default_value;

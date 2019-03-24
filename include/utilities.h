@@ -12,7 +12,7 @@ class MerseneTwisterFactory
   public:
     MerseneTwisterFactory()
     {
-        seed = 48468438;
+        seed = 48469438;
         generator = std::mt19937(seed);
     }
 

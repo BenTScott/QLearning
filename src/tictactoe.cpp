@@ -18,6 +18,30 @@ std::string TicTacToeState::Hash() const
     return os.str();
 };
 
+std::ostream &operator<<(std::ostream &os, const TicTacToeState &obj)
+{
+    for (int i = 0; i < 3; i++)
+    {
+        for (int j = 0; j < 3; j++)
+        {
+            switch (obj.board[3*i + j])
+            {
+            case 0:
+                os << "|O";
+                break;
+            case 1:
+                os << "|X";
+                break;
+            default:
+                os << "| ";
+                break;
+            }
+        }
+        os << "|" << std::endl;
+    }
+    return os;
+};
+
 bool TicTacToeState::IsWin() const
 {
     for (int i = 0; i < 3; i++)

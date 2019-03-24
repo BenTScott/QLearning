@@ -25,7 +25,7 @@ class Game
 
     void RandomPlayer()
     {
-        current_player =  Random::Uniform(0, number_of_players - 1);
+        current_player =  Random::Uniform<int>(0, number_of_players - 1);
     }
 
     void SetState(State new_state)
