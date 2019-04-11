@@ -7,115 +7,56 @@
 #include <array>
 #include <iostream>
 #include "game.h"
-#include "qtable.h"
+#include "agents.h"
 
 template <typename State, typename Action>
 class QLearning
 {
 public:
-  QLearning(Game<State, Action> *game, double epsilon, double gamma, double alpha) : game(game), q_table(alpha, gamma, epsilon)
+  QLearning(Game<State, Action> *game, double epsilon, double gamma, double alpha) : game(game), epsilon(epsilon), gamma(gamma), alpha(alpha) //, q_table(alpha, gamma, epsilon)
   {
   }
 
-  QTable<State, Action> Run(std::size_t iterations)
+  QLearningAgent<State, Action> Run(std::size_t iterations)
   {
+    auto learning_agent = QLearningAgent<State, Action>(epsilon, alpha, gamma);
+    auto random_agent = RandomAgent<State, Action>();
+
     for (std::size_t i = 0; i < iterations; i++)
     {
       std::cout << "Iteration " << i << std::endl;
 
       game->Initialise();
+      learning_agent.InitialiseEpisode();
       State s = game->current_state;
-
+      double reward = 0;
       while (!s.IsTerminal())
       {
-
-#ifdef _DEBUG
-        std::cout << "Game state: " << s.Hash() << std::endl;
-#endif
-
-        Action a = q_table.GetNextAction(s);
-
-#ifdef _DEBUG
-        std::cout << "Action: " << a << std::endl;
-#endif
-
-        auto current_player = game->current_player;
-        double reward = game->ApplyAction(a);
-
-#ifdef _DEBUG
-        std::cout << "Reward: " << reward << std::endl;
-#endif
-
-        if (game->current_player == current_player)
+        Action a;
+        
+        if (game->current_player == 0)
         {
-          q_table.UpdateAction(s, a, reward, game->current_state, true);
+          learning_agent.ApplyReward(s, reward);
+          a = learning_agent.GetAction(s);
         }
+        else
         {
-          q_table.UpdateAction(s, a, reward, game->current_state, false);
+          a = random_agent.GetAction(s);
         }
+        reward = game->ApplyAction(a);
         s = game->current_state;
       }
+      
+      learning_agent.ApplyReward(s, reward);
     }
-    return q_table;
-  }
-
-  QTable<State, Action> RunAgainstRandom(std::size_t iterations)
-  {
-    for (std::size_t i = 0; i < iterations; i++)
-    {
-      std::cout << "Iteration " << i << std::endl;
-
-      game->Initialise();
-      State s = game->current_state;
-
-      while (!s.IsTerminal())
-      {
-        if (game->current_player != 0)
-        {
-          auto actions = game->current_state.AvailableActions();
-          game->ApplyAction(*RandomElement(actions.begin(), actions.end()));
-          s = game->current_state;
-          continue;
-        }
-
-        State state_to_update;
-        State resulting_state;
-        Action agent_action;
-        double reward = 0;
-        for (unsigned int i = 0; i < game->number_of_players; i++)
-        {
-          if (s.IsTerminal())
-          {
-            break;
-          }
-          
-          if (game->current_player == 0)
-          {
-            agent_action = q_table.GetNextAction(s);
-            //auto current_player = game->current_player;
-            state_to_update = s;
-            reward += game->ApplyAction(agent_action);
-            resulting_state = game->current_state; 
-          }
-          else
-          {
-            auto actions = game->current_state.AvailableActions();
-            reward -= game->ApplyAction(*RandomElement(actions.begin(), actions.end()));
-          }
-
-          s = game->current_state;
-        }
-
-        q_table.UpdateAction(state_to_update, agent_action, reward, resulting_state, true);
-      }
-    }
-    return q_table;
+    return learning_agent;
   }
 
 protected:
   Game<State, Action> *game;
-  QTable<State, Action> q_table;
   double epsilon;
+  double gamma;
+  double alpha;
 };
 
 #endif

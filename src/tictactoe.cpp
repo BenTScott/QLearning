@@ -108,7 +108,7 @@ double TicTacToe::ApplyAction(int a)
 
     if (current_state.IsWin())
     {
-        return 1000;
+        return current_player == 0 ? 1 : -1;
     }
 
     NextPlayer();

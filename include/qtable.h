@@ -1,5 +1,5 @@
-#ifndef _INCLUDE_Q_TABLE_H_
-#define _INCLUDE_Q_TABLE_H_
+#ifndef _INCLUDE_QTABLE_H_
+#define _INCLUDE_QTABLE_H_
 
 #include <vector>
 #include <iostream>
@@ -13,11 +13,11 @@ template <typename State, typename Action>
 class QTable
 {
 public:
-  QTable(double step_size, double gamma, double epsilon, double default_value = 0) : default_value(default_value), step_size(step_size), gamma(gamma), epsilon(epsilon)
+  QTable(double alpha, double gamma, double default_value = 0) : alpha(alpha), gamma(gamma), default_value(default_value)
   {
   }
 
-  void UpdateAction(State state, Action action, double reward, State new_state, bool is_players_turn)
+  void UpdateAction(State state, Action action, double reward, State new_state)
   {
     MaximalMap<Action, double> &map = GetActionRewardMap(state);
 
@@ -25,29 +25,9 @@ public:
 
     double best_new_state_est = new_state.IsTerminal() ? 0 : GetActionRewardMap(new_state).MaxValue();
 
-    if (!is_players_turn)
-    {
-      best_new_state_est *= -1;
-    }
-
-    double new_value = (1.0-step_size)*old_est + step_size*(reward + gamma * best_new_state_est);
+    double new_value = (1.0-alpha)*old_est + alpha*(reward + gamma * best_new_state_est);
 
     map.push_update(action, new_value);
-  }
-
-  //Gets the action to take in an epsilon greedy manner.
-  Action GetNextAction(State state)
-  {
-    MaximalMap<Action, double> &map = GetActionRewardMap(state);
-
-    double r = Random::Uniform(0.0, 1.0);
-
-    if (r <= epsilon)
-    {
-      return map.RandomKey();
-    }
-
-    return map.MaxKey();
   }
 
   MaximalMap<Action, double> &GetActionRewardMap(State state)
@@ -67,8 +47,6 @@ public:
     return GetActionRewardMap(state).MaxKey();
   }
 
-  std::map<State, MaximalMap<Action, double>> state_action_reward_map;
-
   void ExportPolicy(const std::string &filename)
   {
     std::ofstream output_file;
@@ -80,12 +58,13 @@ public:
     output_file.close();
   }
 
+  std::map<State, MaximalMap<Action, double>> state_action_reward_map;
+
 protected:
   
-  int default_value;
-  double step_size;
+  double alpha;
   double gamma;
-  double epsilon;
+  int default_value;
 };
 
 #endif
