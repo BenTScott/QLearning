@@ -13,15 +13,12 @@ template <typename State, typename Action>
 class QLearning
 {
 public:
-  QLearning(Game<State, Action> *game, double epsilon, double gamma, double alpha) : game(game), epsilon(epsilon), gamma(gamma), alpha(alpha) //, q_table(alpha, gamma, epsilon)
+  QLearning(Game<State, Action> *game, double epsilon, double gamma, double alpha) : learning_agent(epsilon, alpha, gamma), game(game)
   {
   }
 
-  QLearningAgent<State, Action> Run(std::size_t iterations)
+  QLearningAgent<State, Action> Run(std::size_t iterations, Agent<State, Action> *opponent = new RandomAgent<State, Action>())
   {
-    auto learning_agent = QLearningAgent<State, Action>(epsilon, alpha, gamma);
-    auto random_agent = RandomAgent<State, Action>();
-
     for (std::size_t i = 0; i < iterations; i++)
     {
       std::cout << "Iteration " << i << std::endl;
@@ -41,7 +38,7 @@ public:
         }
         else
         {
-          a = random_agent.GetAction(s);
+          a = opponent->GetAction(s);
         }
         reward = game->ApplyAction(a);
         s = game->current_state;
@@ -53,10 +50,8 @@ public:
   }
 
 protected:
+  QLearningAgent<State, Action> learning_agent;
   Game<State, Action> *game;
-  double epsilon;
-  double gamma;
-  double alpha;
 };
 
 #endif

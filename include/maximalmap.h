@@ -89,7 +89,8 @@ class MaximalMap
     {
         return std::get<0>(*RandomElement(map.begin(), map.end()));
     }
-
+    
+    std::map<T, S> map;
   protected:
     struct MaximalPair
     {
@@ -98,8 +99,7 @@ class MaximalMap
         MaximalPair(T t, S s) : t(t), s(s){};
     };
 
-    std::map<T, S> map;
-    MaximalPair *max_pair;
+    MaximalPair *max_pair = nullptr;
 };
 
 #endif

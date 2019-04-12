@@ -8,7 +8,7 @@ int main(int argc, const char *argv[])
 {
 	auto r_learning = QLearning<TicTacToeState, int>(new TicTacToe(), 0.2, 0.9, 0.05);
 
-	auto agent = r_learning.Run(300000);
+	r_learning.Run(100000);
 
 	PolicyAgent<TicTacToeState, int> agent_1mil;
 	agent_1mil.ImportPolicy("out/tictactoepolicy-1mil-iter.dat");
@@ -16,19 +16,22 @@ int main(int argc, const char *argv[])
 	PolicyAgent<TicTacToeState, int> agent_25mil;
 	agent_25mil.ImportPolicy("out/tictactoepolicy-25mill-iter-optimal.dat");
 
+	r_learning.Run(100000, &agent_1mil);
+	auto agent = r_learning.Run(100000, &agent_25mil);
+
 	std::cout << "Done training" << std::endl;
 
 	auto test_agent = agent.CreateTestingAgent();
 
 	double total_reward = 0;
-	for (int i = 0; i < 1000; i++)
+	for (int i = 0; i < 10000; i++)
 	{
 		total_reward += PlayTicTacToe(test_agent, agent_1mil);
 	}
 	std::cout << "Reward for new agent vs 1mil " << total_reward << std::endl;
 
 	total_reward = 0;
-	for (int i = 0; i < 1000; i++)
+	for (int i = 0; i < 10000; i++)
 	{
 		total_reward += PlayTicTacToe(test_agent, agent_25mil);
 	}
@@ -36,7 +39,7 @@ int main(int argc, const char *argv[])
 
 	RandomAgent<TicTacToeState, int> rand_agent;
 	total_reward = 0;
-	for (int i = 0; i < 1000; i++)
+	for (int i = 0; i < 10000; i++)
 	{
 		total_reward += PlayTicTacToe(test_agent, rand_agent);
 	}

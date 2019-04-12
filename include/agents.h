@@ -3,6 +3,7 @@
 
 #include <string>
 #include <map>
+#include <vector>
 #include "qtable.h"
 
 template <typename State, typename Action>
@@ -17,8 +18,8 @@ template <typename State, typename Action>
 class PolicyAgent : public Agent<State, Action>
 {
 public:
-  PolicyAgent() {};
-  PolicyAgent(std::map<State,Action> policy) : map(policy) {}
+  PolicyAgent(){};
+  PolicyAgent(std::map<State, Action> policy) : map(policy) {}
 
   void ImportPolicy(std::string filename);
   void ExportPolicy(const std::string &filename);
@@ -38,6 +39,17 @@ public:
 };
 
 template <typename State, typename Action>
+class ProbalisticAgent : public Agent<State, Action>
+{
+public:
+  ProbalisticAgent(std::map<State, std::vector<ProbabilityPair<Action>>> map) : map(map) {}
+
+  virtual Action GetAction(const State &state) override;
+
+  std::map<State, std::vector<ProbabilityPair<Action>>> map;
+};
+
+template <typename State, typename Action>
 class QLearningAgent : public Agent<State, Action>
 {
 public:
@@ -46,6 +58,7 @@ public:
   virtual Action GetAction(const State &state) override;
   void ApplyReward(const State &new_state, double reward);
   PolicyAgent<State, Action> CreateTestingAgent();
+  ProbalisticAgent<State, Action> CreateProbalisticAgent(double temperature);
   void InitialiseEpisode()
   {
     previous_state = nullptr;
@@ -56,8 +69,8 @@ public:
 
 protected:
   double epsilon;
-  State* previous_state = nullptr;
-  Action* previous_action = nullptr;
+  State *previous_state = nullptr;
+  Action *previous_action = nullptr;
 };
 
 template <typename State, typename Action>
@@ -68,7 +81,6 @@ public:
 
   virtual Action GetAction(const State &state) override;
 };
-
 
 #include "template_implementation/agents.tpp"
 

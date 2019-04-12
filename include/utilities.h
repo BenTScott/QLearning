@@ -61,5 +61,29 @@ I RandomElement(I begin, I end)
     return begin;
 };
 
+template<typename T>
+struct ProbabilityPair
+{
+  ProbabilityPair(T t, double p) : t(t), p(p){};
+  T t;
+  double p;
+};
+
+template<typename T>
+T Choose(std::vector<ProbabilityPair<T>> choices)
+{
+  double value = Random::Uniform();
+  double total = 0;
+  for(ProbabilityPair<T> &choice : choices)
+  {
+    total += choice.p;
+    if (total >= value)
+    {
+      return choice.t;      
+    }
+  }
+
+  return choices.back().t;
+}
 
 #endif

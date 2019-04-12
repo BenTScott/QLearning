@@ -2,6 +2,8 @@
 #include <fstream>
 #include <vector>
 #include "utilities.h"
+#include <assert.h>
+#include <cmath>
 
 #pragma region POLICYAGENT
 
@@ -112,6 +114,39 @@ PolicyAgent<State, Action> QLearningAgent<State, Action>::CreateTestingAgent()
     return PolicyAgent<State, Action>(policy);
 }
 
+template <typename State, typename Action>
+ProbalisticAgent<State, Action> QLearningAgent<State, Action>::CreateProbalisticAgent(double temperature)
+{
+    assert(temperature > 0);
+    std::map<State, std::vector<ProbabilityPair<Action>>> policy;
+    
+    for(auto &state_map_pair : q_table.state_action_reward_map)
+    {
+        MaximalMap<Action, double> max_map = std::get<1>(state_map_pair);
+        std::vector<ProbabilityPair<Action>> v;
+        std::transform(
+            max_map.map.begin(),
+            max_map.map.end(),
+            std::back_inserter(v),
+            [=](std::pair<Action, double> a) -> ProbabilityPair<Action> {
+                return ProbabilityPair<Action>(std::get<0>(a), exp(std::get<1>(a)/temperature));
+            }
+        );
+        double sum = 0;
+        for (ProbabilityPair<Action> &pair : v)
+        {
+            sum += pair.p;
+        }
+        for (ProbabilityPair<Action> &pair : v)
+        {
+            pair.p = pair.p/sum;
+        }
+        policy[std::get<0>(state_map_pair)] = v;
+    }
+
+    return ProbalisticAgent<State, Action>(policy);
+}
+
 #pragma endregion QLEARNINGAGENT
 
 #pragma region PLAYERAGENT
@@ -126,3 +161,19 @@ Action PlayerAgent<State, Action>::GetAction(const State &state)
 }
 
 #pragma endregion PLAYERAGENT
+
+#pragma region PROBALISTICAGENT
+
+template <typename State, typename Action>
+Action ProbalisticAgent<State, Action>::GetAction(const State &state)
+{
+    if (map.count(state))
+    {
+        return Choose(map[state]);
+    }
+
+    std::vector<Action> av_actions = state.AvailableActions();
+    return *RandomElement(av_actions.begin(), av_actions.end());
+}
+
+#pragma endregion PROBALISTICAGENT
